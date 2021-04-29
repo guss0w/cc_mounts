@@ -12,6 +12,7 @@
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.1"
   },
+  "homepage": "https://guss0w.github.io/cc_mounts",
   "scripts": {
     "start": "react-scripts start",
     "predeploy": "npm run build",
