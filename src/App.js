@@ -10,43 +10,42 @@ import mountlist from './data/mounts.map.json'
 function App() {
   const [table, setTable] = useState([])
   const orderedMounts = Object.keys(mountlist)
-  const get = async (characterId) => {
-    const privateKey = "cd40cec1f7294f50a2f480e731e6de97daa78b41ccb543159943caefb5698be6"
-    const request = `https://xivapi.com/character/${characterId}?data=MIMO&private_key=${privateKey}`
-
-    const character = await axios.get(request)
-    let characterMounts = orderedMounts.reduce((final, instance) => {final[instance]=false; return final;}, {})
-    if (!character || !character.data || !character.data.Character) {
-      character.data.Character = {
-        Avatar: '',
-        ID: 0,
-        Name: ''
-      }
-    }
-    if (!character || !character.data || !character.data.Mounts) {
-      character.data.Mounts = []
-    } else {
-      for(let idx in character.data.Mounts) {
-        const mountName = character.data.Mounts[idx].Name
-        if(characterMounts[mountName] !== undefined) {
-          characterMounts[mountName] = true
-        }
-      }
-    }
-
-    const formatted = {
-      Avatar: character.data.Character.Avatar,
-      Name: character.data.Character.Name,
-      ID: character.data.Character.ID,
-      Mounts: characterMounts
-    }
-    console.log( characterMounts )
-    return formatted
-  }
   
   // Only run our api request on first load
   useEffect(() => {
     document.title = 'C&C Mounts List'
+    const get = async (characterId) => {
+      const privateKey = "cd40cec1f7294f50a2f480e731e6de97daa78b41ccb543159943caefb5698be6"
+      const request = `https://xivapi.com/character/${characterId}?data=MIMO&private_key=${privateKey}`
+
+      const character = await axios.get(request)
+      let characterMounts = orderedMounts.reduce((final, instance) => {final[instance]=false; return final;}, {})
+      if (!character || !character.data || !character.data.Character) {
+        character.data.Character = {
+          Avatar: '',
+          ID: 0,
+          Name: ''
+        }
+      }
+      if (!character || !character.data || !character.data.Mounts) {
+        character.data.Mounts = []
+      } else {
+        for(let idx in character.data.Mounts) {
+          const mountName = character.data.Mounts[idx].Name
+          if(characterMounts[mountName] !== undefined) {
+            characterMounts[mountName] = true
+          }
+        }
+      }
+
+      const formatted = {
+        Avatar: character.data.Character.Avatar,
+        Name: character.data.Character.Name,
+        ID: character.data.Character.ID,
+        Mounts: characterMounts
+      }
+      return formatted
+    }
     async function getData() {
       const characters = await Promise.all(Object.keys(charactermap).map(k => get(charactermap[k])))
       setTable(characters)
@@ -57,25 +56,29 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <h1>C&C Mount Farms</h1>
       </header>
       <div>
         <table>
           <thead>
              <tr>
-             <td/>
+             <th/>
                {orderedMounts.map(mount => (
-                 <td key={mount}>
+                 <th key={mount}>
                    {mountlist[mount]}
-                 </td>
+                 </th>
                ))}
              </tr>
           </thead>
           <tbody>
             {table.map(char => (
               <tr key={char.ID}>
-                <td><img alt={char.Name} className="avatar" src={char.Avatar}/>{char.Name}</td>
+                <td className="user">
+                  <img alt={char.Name} className="avatar" src={char.Avatar}/>
+                  <span className="username">{char.Name}</span>
+                </td>
                 {orderedMounts.map(mount => (
-                   <td key={mount}>{char.Mounts[mount] ? 'x' : ''}</td>
+                   <td key={mount} className="mountGot">{char.Mounts[mount] ? 'x' : ''}</td>
                 ))}
               </tr>
             ))}
