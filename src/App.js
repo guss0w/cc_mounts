@@ -6,11 +6,16 @@ import './App.css'
 // Data
 import charactermap from './data/character.map.json'
 import mountlist from './data/mounts.map.json'
+// Components
+import Footer from './components/Footer'
 
 function App() {
   const [table, setTable] = useState([])
   const orderedMounts = Object.keys(mountlist)
-  
+  const summarizeMountData = (userData) => {
+    console.log(userData)
+  }
+
   // Only run our api request on first load
   useEffect(() => {
     document.title = 'C&C Mounts List'
@@ -49,9 +54,10 @@ function App() {
     async function getData() {
       const characters = await Promise.all(Object.keys(charactermap).map(k => get(charactermap[k])))
       setTable(characters)
+      summarizeMountData(characters)
     }
     getData()
-  }, [])
+  }, [orderedMounts, summarizeMountData])
 
   return (
     <div className="App">
@@ -84,6 +90,7 @@ function App() {
             ))}
             {table.length === 0 ? <tr><td>Loading...</td></tr> : <></>}
           </tbody>
+          <Footer data={table} />
         </table>
       </div>
     </div>
